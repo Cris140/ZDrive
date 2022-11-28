@@ -9,14 +9,13 @@ import io
 from googleapiclient.http import MediaIoBaseDownload
 from zdrive import DriveAPI
 from multiprocessing import Process
-
+import multiprocessing
 try:
     from signal import signal, SIGPIPE, SIG_DFL
     signal(SIGPIPE, SIG_DFL)
 except ImportError:
     pass
 
-p = multiprocessing.Pool(4)
 class Downloader(DriveAPI):
     def __init__(self):
         super(Downloader, self).__init__()
@@ -71,6 +70,7 @@ class Downloader(DriveAPI):
         for f in all_files:
             p = Process(target=self.downloadFile,
                         args=[f['item_id'], f['file_path']])
+            p = multiprocessing.Pool(4)
             p.start()
             download_processes.append(p)
 
